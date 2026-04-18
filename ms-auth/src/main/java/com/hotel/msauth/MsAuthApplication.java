@@ -1,4 +1,4 @@
-package com.hotel.ms_auth;
+package com.hotel.msauth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
