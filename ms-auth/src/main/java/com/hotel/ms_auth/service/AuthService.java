@@ -31,4 +31,8 @@ public class AuthService {
         }
         return Optional.empty();
     }
+
+    public String encriptarPassword(String password) {
+        return passwordEncoder.encode(password);
+    }
 }
