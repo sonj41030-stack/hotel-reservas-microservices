@@ -1,0 +1,12 @@
+package com.hotel.mspagos.repository;
+
+import com.hotel.mspagos.model.EstadoPago;
+import com.hotel.mspagos.model.Pago;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface PagoRepository extends JpaRepository<Pago,Long> {
+    List<Pago> findByReservaId(Long reservaId);
+    List<Pago> findByEstado(EstadoPago estado);
+}
