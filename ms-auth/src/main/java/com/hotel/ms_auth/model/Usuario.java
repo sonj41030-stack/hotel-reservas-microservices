@@ -3,9 +3,11 @@ package com.hotel.ms_auth.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "usuario")
 public class Usuario {
@@ -27,7 +29,5 @@ public class Usuario {
 
     @Enumerated(EnumType.STRING)
     private Rol rol;
-
-
 
 }

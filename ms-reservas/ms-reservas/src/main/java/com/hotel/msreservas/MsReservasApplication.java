@@ -1,13 +1,13 @@
-package com.hotel.msauth;
+package com.hotel.msreservas;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MsAuthApplication {
+public class MsReservasApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MsAuthApplication.class, args);
+        SpringApplication.run(MsReservasApplication.class, args);
     }
 
 }
