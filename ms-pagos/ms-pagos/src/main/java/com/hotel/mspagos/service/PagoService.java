@@ -7,6 +7,7 @@ import com.hotel.mspagos.model.Pago;
 import com.hotel.mspagos.repository.PagoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import java.util.Optional;
 public class PagoService {
 
     private final PagoRepository pagoRepository;
+    private final WebClient webClient;
 
     public PagoResponse procesarPago(PagoRequest request) {
         Pago pago = new Pago();
@@ -25,6 +27,19 @@ public class PagoService {
         pago.setEstado(EstadoPago.COMPLETADO);
         pago.setFechaPago(LocalDateTime.now());
         Pago guardado = pagoRepository.save(pago);
+
+        // Avisar a ms-reservas que el pago fue exitoso
+        try {
+            webClient.put()
+                    .uri("http://localhost:8082/reservas/{id}/estado?estado=CONFIRMADA",
+                            request.getReservaId())
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
+        } catch (Exception e) {
+            System.out.println("No se pudo actualizar la reserva: " + e.getMessage());
+        }
+
         return convertirAResponse(guardado);
     }
 
