@@ -17,6 +17,7 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
 
+    //entender su logica y base
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
