@@ -44,7 +44,7 @@ public class ClienteController {
         }
         return ResponseEntity.status(404).body("Cliente no encontrado");
     }
-
+    //importante
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarCliente(@PathVariable Long id, @Valid @RequestBody ClienteRequest request) {
         return ResponseEntity.ok(clienteService.actualizarCliente(id, request));
