@@ -1,7 +1,6 @@
 package com.hotel.msreserva.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.time.LocalDate;
 
@@ -14,20 +13,20 @@ public class Reserva {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @Column(name = "cliente_id") // <--- Esto mapea clienteId a cliente_id en SQL
     private Long clienteId;
 
-    @NotNull
+    @Column(name = "habitacion_id") // <--- Esto mapea habitacionId a habitacion_id
     private Long habitacionId;
 
-    @NotNull
+    @Column(name = "fecha_entrada") // <--- Mismo caso para la fecha
     private LocalDate fechaEntrada;
 
-    @NotNull
+    @Column(name = "fecha_salida")
     private LocalDate fechaSalida;
+
+    private Double total;
 
     @Enumerated(EnumType.STRING)
     private EstadoReserva estado;
-
-    private Double total;
 }
