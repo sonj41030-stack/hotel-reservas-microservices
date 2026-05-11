@@ -7,11 +7,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Slf4j
 @Component
-public class hotelCliente {
+public class HotelCliente {
 
     private final WebClient webClient;
 
-    public hotelCliente(WebClient.Builder builder) {
+    public HotelCliente(WebClient.Builder builder) {
         this.webClient = builder
                 .baseUrl("http://localhost:8085")
                 .build();

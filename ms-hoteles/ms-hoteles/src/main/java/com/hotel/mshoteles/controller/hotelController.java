@@ -1,8 +1,8 @@
 package com.hotel.mshoteles.controller;
 
 
-import com.hotel.mshoteles.dto.hotelRequestDTO;
-import com.hotel.mshoteles.dto.hotelResponseDTO;
+import com.hotel.mshoteles.dto.HotelRequestDTO;
+import com.hotel.mshoteles.dto.HotelResponseDTO;
 import com.hotel.mshoteles.service.HotelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,36 +22,31 @@ public class hotelController {
     private final HotelService hotelService;
 
     @GetMapping
-    public ResponseEntity<List<hotelResponseDto>> obtenerTodos(){
+    public ResponseEntity<List<HotelResponseDTO>> obtenerTodos(){
         log.info("GET /api/hoteles - Obteniendo todos los hoteles");
-        List<hotelResponseDTO> hoteles = hotelService.obtenerTodos();
+        List<HotelResponseDTO> hoteles = hotelService.obtenerTodos();
         return ResponseEntity.ok(hoteles);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<hotelResponseDTO> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<HotelResponseDTO> obtenerPorId(@PathVariable Long id) {
         log.info("GET /api/hoteles/{} - Buscando hotel", id);
-        hotelResponseDTO hotel = hotelService.obtenerPorId(id);
+        HotelResponseDTO hotel = hotelService.obtenerPorId(id);
         return ResponseEntity.ok(hotel);
     }
     @GetMapping("/cuidad/{cuidad}")
-    public ResponseEntity<List<hotelResponseDTO>> obtenerPorCuidad(@PathVariable String cuidad) {
+    public ResponseEntity<List<HotelResponseDTO>> obtenerPorCuidad(@PathVariable String cuidad) {
         log.info("GET /api/hoteles/cuidad/{} - Buscando hoteles", cuidad);
-        List<hotelResponseDTO> hoteles = hotelService.obtenerPorCuidad(cuidad);
+        List<HotelResponseDTO> hoteles = hotelService.obtenerPorCuidad(cuidad);
         return ResponseEntity.ok(hoteles);
     }
     @PostMapping
-    public ResponseEntity<hotelResponseDTO> crear(@Valid @RequestBody hotelRequestDTO dto) {
+    public ResponseEntity<HotelResponseDTO> crear(@Valid @RequestBody HotelRequestDTO dto) {
         log.info("POST /api/hoteles - Creando hotel: {}", dto.getNombre());
-        hotelResponseDTO hotel = hotelService.crear(dto);
+        HotelResponseDTO hotel = hotelService.crear(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(hotel);
     }
-    @PostMapping
-    public ResponseEntity<hotelResponseDTO> crear(@Valid @RequestBody hotelRequestDTO dto) {
-        log.info("POST /api/hoteles - Creando hotel: {}", dto.getNombre());
-        hotelResponseDTO hotel = hotelService.crear(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(hotel);
-    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Long id) {
         log.info("DELETE /api/hoteles/{} - Eliminando hotel", id);

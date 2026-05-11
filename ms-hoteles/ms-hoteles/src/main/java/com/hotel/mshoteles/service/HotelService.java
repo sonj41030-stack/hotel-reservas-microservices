@@ -1,7 +1,7 @@
 package com.hotel.mshoteles.service;
 
-import com.hotel.mshoteles.dto.hotelRequestDTO;
-import com.hotel.mshoteles.dto.hotelResponseDTO;
+import com.hotel.mshoteles.dto.HotelRequestDTO;
+import com.hotel.mshoteles.dto.HotelResponseDTO;
 import com.hotel.mshoteles.exception.hotelNotFoundException;
 import com.hotel.mshoteles.model.Hotel;
 import com.hotel.mshoteles.repository.hotelRepository;
@@ -18,14 +18,14 @@ public class HotelService {
 
     private final hotelRepository hotelRepository;
 
-    public List<hotelResponseDTO> obtenerTodos(){
+    public List<HotelResponseDTO> obtenerTodos(){
         log.info("Obteniendo todos los hoteles");
         return hotelRepository.findByActivoTrue()
                 .stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
     }
-    public hotelResponseDTO obtenerPorId(Long id){
+    public HotelResponseDTO obtenerPorId(Long id){
         log.info("Buscando hotel con id: {}", id);
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> {
@@ -35,7 +35,7 @@ public class HotelService {
         return convertirADTO(hotel);
     }
 
-    public hotelResponseDTO crear(hotelRequestDTO dto){
+    public HotelResponseDTO crear(HotelRequestDTO dto){
         log.info("Creando nuevo hotel : {}", dto.getNombre());
         if (hotelRepository.existsByCorreo(dto.getCorreo())){
             log.error("El hotel ya existe: {}", dto.getCorreo());
@@ -48,7 +48,7 @@ public class HotelService {
 
     }
 
-    public hotelResponseDTO actualizar(Long id, hotelRequestDTO dto) {
+    public HotelResponseDTO actualizar(Long id, HotelRequestDTO dto) {
         log.info("Actualizando hotel con id: {}", id);
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> {
@@ -78,7 +78,7 @@ public class HotelService {
         hotelRepository.save(hotel);
         log.info("Hotel desactivado correctamente con id: {}", id);
     }
-    public List<hotelResponseDTO> obtenerPorCuidad(String cuidad) {
+    public List<HotelResponseDTO> obtenerPorCuidad(String cuidad) {
         log.info("Buscando hoteles en cuidad: {}", cuidad);
         return hotelRepository.findByCuidadAndActivoTrue(cuidad)
                 .stream()
@@ -86,8 +86,8 @@ public class HotelService {
                 .collect(Collectors.toList());
     }
 
-    private hotelResponseDTO convertirADTO(Hotel hotel) {
-        hotelResponseDTO dto = new hotelResponseDTO();
+    private HotelResponseDTO convertirADTO(Hotel hotel) {
+        HotelResponseDTO dto = new HotelResponseDTO();
         dto.setId(hotel.getId());
         dto.setNombre(hotel.getNombre());
         dto.setDireccion(hotel.getDireccion());
@@ -100,7 +100,7 @@ public class HotelService {
         return dto;
     }
 
-    private Hotel convertirAEntidad(hotelRequestDTO dto) {
+    private Hotel convertirAEntidad(HotelRequestDTO dto) {
         Hotel hotel = new Hotel();
         hotel.setNombre(dto.getNombre());
         hotel.setDireccion(dto.getDireccion());
