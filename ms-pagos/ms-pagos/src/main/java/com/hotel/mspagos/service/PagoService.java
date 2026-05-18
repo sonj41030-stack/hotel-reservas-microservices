@@ -1,5 +1,6 @@
 package com.hotel.mspagos.service;
 
+import com.hotel.mspagos.dto.NotificacionDTO;
 import com.hotel.mspagos.dto.PagoRequest;
 import com.hotel.mspagos.dto.PagoResponse;
 import com.hotel.mspagos.model.EstadoPago;
@@ -38,6 +39,25 @@ public class PagoService {
                     .block();
         } catch (Exception e) {
             System.out.println("No se pudo actualizar la reserva: " + e.getMessage());
+        }
+
+        // Enviar notificacion a ms-notificaciones
+        try {
+            NotificacionDTO notificacion = new NotificacionDTO();
+            notificacion.setClienteId(1L);
+            notificacion.setReservaId(request.getReservaId());
+            notificacion.setTipo("PAGO");
+            notificacion.setMensaje("Su pago de $" + request.getMonto() + " fue procesado exitosamente.");
+            notificacion.setEmailDestino("cliente@gmail.com");
+
+            webClient.post()
+                    .uri("http://localhost:8088/api/notificaciones")
+                    .bodyValue(notificacion)
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
+        } catch (Exception e) {
+            System.out.println("No se pudo enviar notificacion: " + e.getMessage());
         }
 
         return convertirAResponse(guardado);
