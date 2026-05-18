@@ -1,6 +1,6 @@
 package com.hotel.msreportes.model;
 
-public enum TipoReporte{
+public enum TiposReporte {
     OCUPACION,
     INGRESOS,
     RESERVAS,

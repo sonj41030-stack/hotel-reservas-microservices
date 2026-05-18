@@ -1,4 +1,8 @@
 package com.hotel.mshousekeeping.model;
 
-public class EstadoTarea {
+public enum EstadoTarea {
+    PENDIENTE,
+    EN_PROCESO,
+    COMPLETADA,
+    CANCELADA
 }
