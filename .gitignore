@@ -1,0 +1,23 @@
+# IDEs y Editores
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+bin/
+target/
+out/
+untitled/
+
+# Sistema Operativo
+.DS_Store
+.DS_Store?
+__MACOSX/
+Thumbs.db
+ehthumbs.db
+
+# Archivos comprimidos y temporales
+*.zip
+*.rar
+*.tar.gz
+*- copia.*
