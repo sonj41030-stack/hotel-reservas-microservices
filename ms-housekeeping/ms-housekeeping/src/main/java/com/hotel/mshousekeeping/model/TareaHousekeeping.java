@@ -26,7 +26,7 @@ public class TareaHousekeeping {
     private String tipoTarea;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "estado", nullable = false)
+    @Column(name = "estado", nullable = false, columnDefinition = "VARCHAR(20)")
     private EstadoTarea estado = EstadoTarea.PENDIENTE;
 
     @Column(name = "empleado_asignado", length = 100)
