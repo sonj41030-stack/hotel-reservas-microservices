@@ -12,7 +12,7 @@ public class Reporte {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo", nullable = false, length = 50)
+    @Column(name = "tipo", nullable = false, length = 50, columnDefinition = "VARCHAR(50)")
     private TiposReporte tipo;
 
     @Column(name = "fecha_inicio", nullable = false)

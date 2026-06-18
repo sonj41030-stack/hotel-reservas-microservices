@@ -3,9 +3,9 @@ CREATE TABLE IF NOT EXISTS reportes (
                                         tipo VARCHAR(50) NOT NULL,
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE NOT NULL,
-    total_reservas INT DEFAULT 0,
-    total_ingresos DOUBLE DEFAULT 0.0,
-    porcentaje_ocupacion DOUBLE DEFAULT 0.0,
+    total_reservas INT,
+    total_ingresos DOUBLE,
+    porcentaje_ocupacion DOUBLE,
     hotel_id BIGINT,
-    observaciones TEXT
+    observaciones LONGTEXT
     );
