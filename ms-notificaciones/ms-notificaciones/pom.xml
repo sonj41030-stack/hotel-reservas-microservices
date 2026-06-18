@@ -20,6 +20,7 @@
         <spring-cloud.version>2023.0.1</spring-cloud.version>
     </properties>
 
+
     <dependencies>
         <!-- Web -->
         <dependency>
@@ -87,7 +88,15 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-    </dependencies>
+
+        <!-- Datafaker -->
+        <dependency>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+            <version>2.5.4</version>
+        </dependency>
+
+    </dependencies>  <!-- ← cierra aquí DESPUÉS de datafaker -->
 
     <dependencyManagement>
         <dependencies>

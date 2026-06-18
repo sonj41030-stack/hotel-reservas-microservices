@@ -54,4 +54,5 @@ public class GlobalExceptionHandler {
         respuesta.put("error", "Error interno del servidor");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);
     }
+
 }
