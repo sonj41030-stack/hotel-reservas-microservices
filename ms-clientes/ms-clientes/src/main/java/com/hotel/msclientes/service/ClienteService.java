@@ -1,13 +1,16 @@
 package com.hotel.msclientes.service;
 
+
 import com.hotel.msclientes.dto.ClienteRequest;
 import com.hotel.msclientes.model.Clientes;
 import com.hotel.msclientes.repository.ClienteRepository;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+@Data
 @Service
 @RequiredArgsConstructor
 public class ClienteService {
@@ -55,4 +58,6 @@ public class ClienteService {
     public void eliminarCliente(Long id) {
         clienteRepository.deleteById(id);
     }
+
+
 }
