@@ -1,13 +1,13 @@
 services:
 
   eureka-server:
-    build: ./eureka-server
+    build: ./eureka-server/eureka-server
     container_name: eureka-server
     ports:
       - "8761:8761"
 
   ms-housekeeping:
-    build: ./ms-housekeeping
+    build: ./ms-housekeeping/ms-housekeeping
     container_name: ms-housekeeping
     ports:
       - "8090:8090"
@@ -17,7 +17,7 @@ services:
       - eureka-server
 
   ms-reportes:
-    build: ./ms-reportes
+    build: ./ms-reportes/ms-reportes
     container_name: ms-reportes
     ports:
       - "8089:8089"
@@ -27,7 +27,7 @@ services:
       - eureka-server
 
   ms-notificaciones:
-    build: ./ms-notificaciones
+    build: ./ms-notificaciones/ms-notificaciones
     container_name: ms-notificaciones
     ports:
       - "8088:8088"
