@@ -1,37 +1,97 @@
+version: '3.8'
+
 services:
 
   eureka-server:
-    build: ./eureka-server/eureka-server
+    build: ./eureka-server
     container_name: eureka-server
     ports:
       - "8761:8761"
+    networks:
+      - hotel-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
-  ms-housekeeping:
-    build: ./ms-housekeeping/ms-housekeeping
-    container_name: ms-housekeeping
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
     ports:
       - "8090:8090"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
     depends_on:
-      - eureka-server
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - hotel-network
 
-  ms-reportes:
-    build: ./ms-reportes/ms-reportes
-    container_name: ms-reportes
-    ports:
-      - "8089:8089"
+  mysql-hoteles:
+    image: mysql:8.0
+    container_name: mysql-hoteles
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-    depends_on:
-      - eureka-server
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_hoteles
+    ports:
+      - "3307:3306"
+    networks:
+      - hotel-network
 
-  ms-notificaciones:
-    build: ./ms-notificaciones/ms-notificaciones
-    container_name: ms-notificaciones
-    ports:
-      - "8088:8088"
+  mysql-habitaciones:
+    image: mysql:8.0
+    container_name: mysql-habitaciones
     environment:
-      SPRING_PROFILES_ACTIVE: docker
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_habitaciones
+    ports:
+      - "3308:3306"
+    networks:
+      - hotel-network
+
+  mariadb-servicios:
+    image: mariadb:10.11
+    container_name: mariadb-servicios
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_servicios
+    ports:
+      - "3309:3306"
+    networks:
+      - hotel-network
+
+  ms-hoteles:
+    build: ./ms-hoteles
+    container_name: ms-hoteles
+    ports:
+      - "8085:8085"
     depends_on:
+      - mysql-hoteles
       - eureka-server
+    networks:
+      - hotel-network
+
+  ms-habitaciones:
+    build: ./ms-habitaciones
+    container_name: ms-habitaciones
+    ports:
+      - "8086:8086"
+    depends_on:
+      - mysql-habitaciones
+      - eureka-server
+    networks:
+      - hotel-network
+
+  ms-servicios:
+    build: ./ms-servicios
+    container_name: ms-servicios
+    ports:
+      - "8087:8087"
+    depends_on:
+      - mariadb-servicios
+      - eureka-server
+    networks:
+      - hotel-network
+
+networks:
+  hotel-network:
+    driver: bridge

@@ -17,8 +17,8 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
 
-    @ExceptionHandler(servicioNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleServicioNotFound(servicioNotFoundException ex) {
+    @ExceptionHandler(ServicioNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleServicioNotFound(ServicioNotFoundException ex) {
         log.error("Servicio no encontrado: {}", ex.getMessage());
         Map<String, String> error = new HashMap<>();
         error.put("error", ex.getMessage());
