@@ -1,21 +1,16 @@
 🏨 Hotel BDI — Sistema de Reservas con Microservicios
 
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?logo=springboot)
-![Java](https://img.shields.io/badge/Java-17-orange?logo=java)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?logo=mysql)
-![Swagger](https://img.shields.io/badge/Swagger-OpenAPI%203.0-green?logo=swagger)
-![Eureka](https://img.shields.io/badge/Eureka-Service%20Discovery-yellow)
+Spring Boot Java MySQL Swagger Eureka
 
 Sistema de gestión hotelera desarrollado con arquitectura de microservicios usando Spring Boot, Spring Cloud y MySQL. Incluye autenticación JWT, documentación Swagger/OpenAPI y descubrimiento de servicios con Eureka.
 
 👥 Equipo de Desarrollo
 
 | Integrante | Microservicios |
-|-----------|----------------|
-| **Edixon Cabriles (Jhonaiker)** | ms-auth · ms-clientes · ms-reservas · ms-pagos |
-| **Belén Conalef** | ms-hoteles · ms-habitaciones · ms-servicios |
-| **Ignacio Díaz** | api-gateway · eureka-server |
-| **Mathias Guerrero** | ms-notificaciones · ms-reportes · ms-housekeeping |
+|---|---|
+| Edixon Cabriles (Jhonaiker) | ms-auth · ms-clientes · ms-reservas · ms-pagos |
+| Belén Conalef | ms-hoteles · ms-habitaciones · ms-servicios |
+| Ignacio Díaz | api-gateway · eureka-server · ms-notificaciones · ms-reportes · ms-housekeeping |
 
 🏗️ Arquitectura del Sistema
 
@@ -34,9 +29,10 @@ Frontend / Postman
         ├── ms-habitaciones(8086)  — Belén
         ├── ms-servicios   (8087)  — Belén
         │
-        ├── ms-notificaciones (8088) — Mathias
-        ├── ms-reportes       (8089) — Mathias
-        └── ms-housekeeping   (8090) — Mathias
+        ├── ms-notificaciones (8088) — Ignacio ❌ pendiente / sin conectar
+        ├── ms-reportes       (8089) — Ignacio ❌ pendiente / sin conectar
+        └── ms-housekeeping   (8090) — Ignacio ❌ pendiente / sin conectar
+```
 
  📦 Microservicios
 
@@ -78,12 +74,15 @@ Servicios adicionales del hotel.
 
 🔔 ms-notificaciones — Puerto 8088
 Envío de notificaciones a clientes.
+> ❌ Pendiente — aún sin conectar al resto del sistema.
 
  📊 ms-reportes — Puerto 8089
 Generación de reportes del sistema.
+> ❌ Pendiente — aún sin conectar al resto del sistema.
 
 🧹 ms-housekeeping — Puerto 8090
 Gestión de limpieza y mantenimiento de habitaciones.
+> ❌ Pendiente — aún sin conectar al resto del sistema.
 
 🚀 Cómo levantar el proyecto
 
@@ -97,7 +96,7 @@ Orden de inicio
 
 Siempre respetar este orden:
 
-bash
+```bash
 1. Eureka Server (primero siempre)
 cd eureka-server
 ./mvnw spring-boot:run
@@ -127,7 +126,7 @@ CREATE DATABASE db_habitaciones;
 📋 Tecnologías Utilizadas
 
 | Tecnología | Uso |
-|-----------|-----|
+|---|---|
 | Spring Boot 3.x | Framework principal |
 | Spring Cloud Netflix Eureka | Descubrimiento de servicios |
 | Spring Cloud Gateway | API Gateway |
@@ -144,13 +143,11 @@ CREATE DATABASE db_habitaciones;
 Una vez levantados los microservicios, la documentación está disponible en:
 
 | Microservicio | URL Swagger |
-|--------------|-------------|
+|---|---|
 | ms-auth | http://localhost:8081/doc/swagger-ui/index.html |
 | ms-clientes | http://localhost:8084/doc/swagger-ui/index.html |
 | ms-reservas | http://localhost:8082/doc/swagger-ui/index.html |
 | ms-pagos | http://localhost:8083/doc/swagger-ui/index.html |
-
----
 
 🗄️ Estructura del Repositorio
 
@@ -169,17 +166,15 @@ hotel-reservas-microservices/
 ├── ms-reportes/
 ├── ms-housekeeping/
 └── README.md
-
+```
 
 🔄 Flujo de una Reserva Completa
 
-```
-1. Login       → ms-auth        (obtener JWT)
-2. Buscar hab. → ms-habitaciones (verificar disponibilidad)
-3. Reservar    → ms-reservas    (crear reserva)
-4. Pagar       → ms-pagos       (procesar pago)
-5. Notificar   → ms-notificaciones (confirmar por email)
-```
+Login → ms-auth (obtener JWT)
+Buscar hab. → ms-habitaciones (verificar disponibilidad)
+Reservar → ms-reservas (crear reserva)
+Pagar → ms-pagos (procesar pago)
+Notificar → ms-notificaciones (confirmar por email)
 
 ---
 
