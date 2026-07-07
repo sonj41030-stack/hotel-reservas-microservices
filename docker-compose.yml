@@ -19,7 +19,7 @@ services:
     build: ./api-gateway
     container_name: api-gateway
     ports:
-      - "8090:8090"
+      - "9000:8080"
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -88,6 +88,72 @@ services:
       - "8087:8087"
     depends_on:
       - mariadb-servicios
+      - eureka-server
+    networks:
+      - hotel-network
+
+  mysql-notificaciones:
+    image: mysql:8.0
+    container_name: mysql-notificaciones
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_notificaciones
+    ports:
+      - "3310:3306"
+    networks:
+      - hotel-network
+
+  mysql-reportes:
+    image: mysql:8.0
+    container_name: mysql-reportes
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_reportes
+    ports:
+      - "3311:3306"
+    networks:
+      - hotel-network
+
+  mysql-housekeeping:
+    image: mysql:8.0
+    container_name: mysql-housekeeping
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_housekeeping
+    ports:
+      - "3312:3306"
+    networks:
+      - hotel-network
+
+  ms-notificaciones:
+    build: ./ms-notificaciones
+    container_name: ms-notificaciones
+    ports:
+      - "8088:8088"
+    depends_on:
+      - mysql-notificaciones
+      - eureka-server
+    networks:
+      - hotel-network
+
+  ms-reportes:
+    build: ./ms-reportes
+    container_name: ms-reportes
+    ports:
+      - "8089:8089"
+    depends_on:
+      - mysql-reportes
+      - eureka-server
+    networks:
+      - hotel-network
+
+  ms-housekeeping:
+    build: ./ms-housekeeping
+    container_name: ms-housekeeping
+    ports:
+      - "8090:8090"
+    depends_on:
+      - mysql-housekeeping
       - eureka-server
     networks:
       - hotel-network
