@@ -1,7 +1,7 @@
 package com.hotel.msservicios.exception;
 
-public class servicioNotFoundException extends RuntimeException {
-    public servicioNotFoundException(String mensaje) {
+public class ServicioNotFoundException extends RuntimeException {
+    public ServicioNotFoundException(String mensaje) {
         super(mensaje);
     }
 }
