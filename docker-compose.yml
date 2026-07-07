@@ -125,7 +125,7 @@ services:
       - hotel-network
 
   ms-reservas:
-    build: ./ms-reservas/ms-reserva
+    build: ./ms-reservas
     container_name: ms-reservas
     ports:
       - "8082:8082"
@@ -136,7 +136,7 @@ services:
       - hotel-network
 
   ms-pagos:
-    build: ./ms-pagos/ms-pagos
+    build: ./ms-pagos
     container_name: ms-pagos
     ports:
       - "8083:8083"
