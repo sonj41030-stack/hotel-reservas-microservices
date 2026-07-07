@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class servicioRequestDTO {
+public class ServicioRequestDTO {
 
     @NotBlank(message = "El nombre no puede estar vacío")
     private String nombre;
