@@ -9,8 +9,8 @@ Sistema de gestión hotelera desarrollado con arquitectura de microservicios usa
 | Integrante | Microservicios |
 |---|---|
 | Edixon Cabriles (Jhonaiker) | ms-auth · ms-clientes · ms-reservas · ms-pagos |
-| Belén Conalef | ms-hoteles · ms-habitaciones · ms-servicios |
-| Ignacio Díaz | api-gateway · eureka-server · ms-notificaciones · ms-reportes · ms-housekeeping |
+| Belén Conalef | api-gateway · ms-hoteles · ms-habitaciones · ms-servicios |
+| Ignacio Díaz | eureka-server · ms-notificaciones · ms-reportes · ms-housekeeping |
 
 🏗️ Arquitectura del Sistema
 
