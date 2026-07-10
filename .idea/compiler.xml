@@ -9,16 +9,17 @@
         <module name="api-gateway" />
         <module name="eureka-server" />
       </profile>
-      <profile name="Annotation profile for ms-habitaciones" enabled="true">
+      <profile name="Annotation profile for ms-hoteles" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
         </processorPath>
+        <module name="ms-hoteles (2)" />
+        <module name="ms-hoteles (1)" />
         <module name="ms-habitaciones" />
         <module name="ms-hoteles" />
-        <module name="ms-hoteles (1)" />
       </profile>
     </annotationProcessing>
   </component>
@@ -29,6 +30,7 @@
       <module name="ms-habitaciones" options="-parameters" />
       <module name="ms-hoteles" options="-parameters" />
       <module name="ms-hoteles (1)" options="-parameters" />
+      <module name="ms-hoteles (2)" options="-parameters" />
     </option>
   </component>
 </project>
