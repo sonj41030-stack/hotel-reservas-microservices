@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 // "ms-clientes" debe coincidir con spring.application.name de ese microservicio
 // url es el fallback si Eureka no está activo
-@FeignClient(name = "ms-clientes", url = "http://localhost:8084")
+@FeignClient(name = "ms-clientes")
 public interface ClienteClient {
 
     @GetMapping("/api/clientes/{id}")
