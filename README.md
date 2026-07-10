@@ -9,8 +9,8 @@ Sistema de gestión hotelera desarrollado con arquitectura de microservicios usa
 | Integrante | Microservicios |
 |---|---|
 | Edixon Cabriles (Jhonaiker) | ms-auth · ms-clientes · ms-reservas · ms-pagos |
-| Belén Conalef | api-gateway · ms-hoteles · ms-habitaciones · ms-servicios |
-| Ignacio Díaz | eureka-server · ms-notificaciones · ms-reportes · ms-housekeeping |
+| Belén Conalef | ms-hoteles · ms-habitaciones · ms-servicios |
+| Ignacio Díaz | api-gateway · eureka-server · ms-notificaciones · ms-reportes · ms-housekeeping |
 
 🏗️ Arquitectura del Sistema
 
@@ -29,9 +29,9 @@ Frontend / Postman
         ├── ms-habitaciones(8086)  — Belén
         ├── ms-servicios   (8087)  — Belén
         │
-        ├── ms-notificaciones (8088) — Ignacio ❌ pendiente / sin conectar
-        ├── ms-reportes       (8089) — Ignacio ❌ pendiente / sin conectar
-        └── ms-housekeeping   (8090) — Ignacio ❌ pendiente / sin conectar
+        ├── ms-notificaciones (8088) — Ignacio
+        ├── ms-reportes       (8089) — Ignacio
+        └── ms-housekeeping   (8090) — Ignacio
 ```
 
  📦 Microservicios
@@ -73,16 +73,25 @@ Gestión de habitaciones por hotel.
 Servicios adicionales del hotel.
 
 🔔 ms-notificaciones — Puerto 8088
-Envío de notificaciones a clientes.
-> ❌ Pendiente — aún sin conectar al resto del sistema.
+Envío y gestión de notificaciones a clientes.
+- CRUD de notificaciones
+- Verificación de cliente vía Feign (ms-clientes)
+- Manejo centralizado de errores y validaciones
+- **Swagger:** `http://localhost:8088/doc/swagger-ui/index.html`
 
- 📊 ms-reportes — Puerto 8089
-Generación de reportes del sistema.
-> ❌ Pendiente — aún sin conectar al resto del sistema.
+📊 ms-reportes — Puerto 8089
+Generación y consulta de reportes de ocupación, ingresos y reservas.
+- CRUD de reportes, filtros por tipo, hotel y rango de fechas
+- Cálculo de ingresos totales por hotel y período
+- Validación de hotel existente vía Feign (ms-hoteles)
+- **Swagger:** `http://localhost:8089/doc/swagger-ui/index.html`
 
 🧹 ms-housekeeping — Puerto 8090
-Gestión de limpieza y mantenimiento de habitaciones.
-> ❌ Pendiente — aún sin conectar al resto del sistema.
+Gestión de tareas de limpieza y mantenimiento de habitaciones.
+- CRUD de tareas de housekeeping
+- Validación de habitación existente vía Feign (ms-habitaciones)
+- Manejo de estados de tarea
+- **Swagger:** `http://localhost:8090/doc/swagger-ui/index.html`
 
 🚀 Cómo levantar el proyecto
 
@@ -121,7 +130,13 @@ CREATE DATABASE db_reservas;
 CREATE DATABASE db_pagos;
 CREATE DATABASE db_hoteles;
 CREATE DATABASE db_habitaciones;
+CREATE DATABASE db_servicios;
+CREATE DATABASE db_notificaciones;
+CREATE DATABASE db_reportes;
+CREATE DATABASE db_housekeeping;
 ```
+
+> Nota: con `createDatabaseIfNotExist=true` en la URL JDBC, estas bases se crean solas al levantar cada servicio localmente. En Docker, `docker-compose.yml` ya las crea automáticamente vía `MYSQL_DATABASE`.
 
 📋 Tecnologías Utilizadas
 
@@ -148,6 +163,9 @@ Una vez levantados los microservicios, la documentación está disponible en:
 | ms-clientes | http://localhost:8084/doc/swagger-ui/index.html |
 | ms-reservas | http://localhost:8082/doc/swagger-ui/index.html |
 | ms-pagos | http://localhost:8083/doc/swagger-ui/index.html |
+| ms-notificaciones | http://localhost:8088/doc/swagger-ui/index.html |
+| ms-reportes | http://localhost:8089/doc/swagger-ui/index.html |
+| ms-housekeeping | http://localhost:8090/doc/swagger-ui/index.html |
 
 🗄️ Estructura del Repositorio
 
