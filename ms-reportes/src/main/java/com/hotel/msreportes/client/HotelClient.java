@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 // name = spring.application.name de ms-hoteles
 // url  = fallback directo si Eureka no está activo
-@FeignClient(name = "ms-hoteles", url = "http://localhost:8085")
+@FeignClient(name = "ms-hoteles")
+
 public interface HotelClient {
 
     @GetMapping("/api/hoteles/{id}")
