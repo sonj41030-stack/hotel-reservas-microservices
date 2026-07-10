@@ -187,9 +187,14 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: db_notificaciones
     ports:
-      - "3310:3306"
+      - "3314:3306"
     networks:
       - hotel-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mysql-reportes:
     image: mysql:8.0
@@ -198,9 +203,14 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: db_reportes
     ports:
-      - "3311:3306"
+      - "3315:3306"
     networks:
       - hotel-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mysql-housekeeping:
     image: mysql:8.0
@@ -209,9 +219,14 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: db_housekeeping
     ports:
-      - "3312:3306"
+      - "3316:3306"
     networks:
       - hotel-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   ms-notificaciones:
     build: ./ms-notificaciones
@@ -219,8 +234,10 @@ services:
     ports:
       - "8088:8088"
     depends_on:
-      - mysql-notificaciones
-      - eureka-server
+      mysql-notificaciones:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
     networks:
       - hotel-network
 
@@ -230,8 +247,10 @@ services:
     ports:
       - "8089:8089"
     depends_on:
-      - mysql-reportes
-      - eureka-server
+      mysql-reportes:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
     networks:
       - hotel-network
 
@@ -241,8 +260,10 @@ services:
     ports:
       - "8090:8090"
     depends_on:
-      - mysql-housekeeping
-      - eureka-server
+      mysql-housekeeping:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
     networks:
       - hotel-network
 
