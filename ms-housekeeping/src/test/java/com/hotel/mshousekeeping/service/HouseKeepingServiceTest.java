@@ -240,6 +240,135 @@ class HouseKeepingServiceTest {
     }
 
     // ─────────────────────────────────────────────────────────────────
+    // TEST 11: cambiarEstado() con tarea CANCELADA → lanza excepción
+    // ─────────────────────────────────────────────────────────────────
+    @Test
+    void testCambiarEstadoTareaCancelada() {
+        TareaHousekeeping tarea = crearTareaDePrueba(1L, EstadoTarea.CANCELADA);
+        when(tareaRepository.findById(1L)).thenReturn(Optional.of(tarea));
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> tareaService.cambiarEstado(1L, "PENDIENTE"));
+
+        assertTrue(ex.getMessage().contains("CANCELADA"));
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // TEST 12: cambiarEstado() con string de estado inválido → lanza excepción
+    // ─────────────────────────────────────────────────────────────────
+    @Test
+    void testCambiarEstadoInvalido() {
+        TareaHousekeeping tarea = crearTareaDePrueba(1L, EstadoTarea.PENDIENTE);
+        when(tareaRepository.findById(1L)).thenReturn(Optional.of(tarea));
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> tareaService.cambiarEstado(1L, "ESTADO_QUE_NO_EXISTE"));
+
+        assertTrue(ex.getMessage().contains("inválido"));
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // TEST 13: cambiarEstado() a COMPLETADA → debe registrar fechaCompletado
+    // ─────────────────────────────────────────────────────────────────
+    @Test
+    void testCambiarEstadoACompletada() {
+        TareaHousekeeping tarea = crearTareaDePrueba(1L, EstadoTarea.EN_PROCESO);
+        when(tareaRepository.findById(1L)).thenReturn(Optional.of(tarea));
+        when(tareaRepository.save(any(TareaHousekeeping.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        TareaHousekeeping resultado = tareaService.cambiarEstado(1L, "COMPLETADA");
+
+        assertEquals(EstadoTarea.COMPLETADA, resultado.getEstado());
+        assertNotNull(resultado.getFechaCompletado());
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // TEST 14: asignarEmpleado() con nombre vacío → lanza excepción
+    // ─────────────────────────────────────────────────────────────────
+    @Test
+    void testAsignarEmpleadoVacio() {
+        TareaHousekeeping tarea = crearTareaDePrueba(1L, EstadoTarea.PENDIENTE);
+        when(tareaRepository.findById(1L)).thenReturn(Optional.of(tarea));
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> tareaService.asignarEmpleado(1L, "   "));
+
+        assertTrue(ex.getMessage().contains("vacío"));
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // TEST 15: asignarEmpleado() en tarea ya EN_PROCESO → no cambia el estado
+    // ─────────────────────────────────────────────────────────────────
+    @Test
+    void testAsignarEmpleadoTareaYaEnProceso() {
+        TareaHousekeeping tarea = crearTareaDePrueba(1L, EstadoTarea.EN_PROCESO);
+        when(tareaRepository.findById(1L)).thenReturn(Optional.of(tarea));
+        when(tareaRepository.save(any(TareaHousekeeping.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        TareaHousekeeping resultado = tareaService.asignarEmpleado(1L, "Carlos Pérez");
+
+        assertEquals("Carlos Pérez", resultado.getEmpleadoAsignado());
+        assertEquals(EstadoTarea.EN_PROCESO, resultado.getEstado());
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // TEST 16: obtenerPorEstado() con estado válido → filtra correctamente
+    // ─────────────────────────────────────────────────────────────────
+    @Test
+    void testObtenerPorEstado() {
+        TareaHousekeeping tarea = crearTareaDePrueba(1L, EstadoTarea.PENDIENTE);
+        when(tareaRepository.findByEstado(EstadoTarea.PENDIENTE)).thenReturn(List.of(tarea));
+
+        List<TareaHousekeeping> resultado = tareaService.obtenerPorEstado("pendiente");
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // TEST 17: obtenerPorEstado() con estado inválido → lanza excepción
+    // ─────────────────────────────────────────────────────────────────
+    @Test
+    void testObtenerPorEstadoInvalido() {
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> tareaService.obtenerPorEstado("NO_EXISTE"));
+
+        assertTrue(ex.getMessage().contains("inválido"));
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // TEST 18: obtenerPorEmpleado() → debe retornar tareas de ese empleado
+    // ─────────────────────────────────────────────────────────────────
+    @Test
+    void testObtenerPorEmpleado() {
+        TareaHousekeeping tarea = crearTareaDePrueba(1L, EstadoTarea.PENDIENTE);
+        when(tareaRepository.findByEmpleadoAsignado("Maria González")).thenReturn(List.of(tarea));
+
+        List<TareaHousekeeping> resultado = tareaService.obtenerPorEmpleado("Maria González");
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals("Maria González", resultado.get(0).getEmpleadoAsignado());
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // TEST 19: obtenerPorPrioridad() → debe retornar tareas con esa prioridad
+    // ─────────────────────────────────────────────────────────────────
+    @Test
+    void testObtenerPorPrioridad() {
+        TareaHousekeeping tarea = crearTareaDePrueba(1L, EstadoTarea.PENDIENTE);
+        when(tareaRepository.findByPrioridad("ALTA")).thenReturn(List.of(tarea));
+
+        List<TareaHousekeeping> resultado = tareaService.obtenerPorPrioridad("alta");
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals("ALTA", resultado.get(0).getPrioridad());
+    }
+
+    // ─────────────────────────────────────────────────────────────────
     // Helper: crea una TareaHousekeeping de prueba reutilizable
     // ─────────────────────────────────────────────────────────────────
     private TareaHousekeeping crearTareaDePrueba(Long id, EstadoTarea estado) {

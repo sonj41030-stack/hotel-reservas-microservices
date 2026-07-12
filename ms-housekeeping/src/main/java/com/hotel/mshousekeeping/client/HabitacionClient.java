@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 // Llama a ms-habitaciones para validar que la habitación existe
-@FeignClient(name = "ms-habitaciones", url = "http://localhost:8086")
+@FeignClient(name = "ms-habitaciones")
 public interface HabitacionClient {
 
     @GetMapping("/api/habitaciones/{id}")
