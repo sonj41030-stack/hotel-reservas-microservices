@@ -1,6 +1,7 @@
 package com.hotel.mshabitaciones.cliente;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -13,9 +14,10 @@ public class NotificacionCliente {
 
     private final WebClient webClient;
 
-    public NotificacionCliente(WebClient.Builder builder) {
+    public NotificacionCliente(WebClient.Builder builder,
+                                @Value("${notificacion.service.url}") String notificacionServiceUrl) {
         this.webClient = builder
-                .baseUrl("http://localhost:8088")
+                .baseUrl(notificacionServiceUrl)
                 .build();
     }
 

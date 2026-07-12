@@ -4,6 +4,7 @@ package com.hotel.msservicios.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,10 @@ public class Servicio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull(message = "El hotelId es obligatorio")
+    @Column(nullable = false)
+    private Long hotelId;
 
     @NotBlank(message = "El nombre no puede estar vacío")
     @Column(nullable = false)

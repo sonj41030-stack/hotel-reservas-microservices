@@ -1,10 +1,13 @@
 package com.hotel.msservicios.service;
 
+import com.hotel.msservicios.cliente.HotelCliente;
 import com.hotel.msservicios.dto.ServicioRequestDTO;
 import com.hotel.msservicios.dto.ServicioResponseDTO;
+import com.hotel.msservicios.exception.HotelInvalidoException;
 import com.hotel.msservicios.exception.ServicioNotFoundException;
 import com.hotel.msservicios.model.Servicio;
 import com.hotel.msservicios.repository.ServicioRepository;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 public class ServicioService {
 
     private final ServicioRepository servicioRepository;
+    private final HotelCliente hotelCliente;
 
     public List<ServicioResponseDTO> obtenerTodos() {
         log.info("Obteniendo todos los servicios");
@@ -40,6 +44,15 @@ public class ServicioService {
         return convertirADTO(servicio);
     }
 
+    public List<ServicioResponseDTO> obtenerPorHotel(Long hotelId) {
+        log.info("Buscando servicios del hotel id: {}", hotelId);
+
+        return servicioRepository.findByHotelIdAndActivoTrue(hotelId)
+                .stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
+    }
+
     public List<ServicioResponseDTO> obtenerPorTipo(String tipo) {
         log.info("Buscando servicios por tipo: {}", tipo);
 
@@ -59,12 +72,14 @@ public class ServicioService {
     }
 
     public ServicioResponseDTO crear(ServicioRequestDTO dto) {
-        log.info("Creando nuevo servicio: {}", dto.getNombre());
+        log.info("Creando nuevo servicio: {} para hotel id: {}", dto.getNombre(), dto.getHotelId());
 
         if (servicioRepository.existsByNombre(dto.getNombre())) {
             log.error("Ya existe un servicio con el nombre: {}", dto.getNombre());
             throw new IllegalArgumentException("Ya existe un servicio con ese nombre");
         }
+
+        validarHotelExiste(dto.getHotelId());
 
         Servicio servicio = convertirAEntidad(dto);
         Servicio guardado = servicioRepository.save(servicio);
@@ -83,6 +98,12 @@ public class ServicioService {
                     return new ServicioNotFoundException("Servicio no encontrado con id: " + id);
                 });
 
+        // Solo se vuelve a validar contra ms-hoteles si el hotelId realmente cambió
+        if (!dto.getHotelId().equals(servicio.getHotelId())) {
+            validarHotelExiste(dto.getHotelId());
+        }
+
+        servicio.setHotelId(dto.getHotelId());
         servicio.setNombre(dto.getNombre());
         servicio.setDescripcion(dto.getDescripcion());
         servicio.setPrecio(dto.getPrecio());
@@ -111,10 +132,33 @@ public class ServicioService {
         log.info("Servicio desactivado correctamente con id: {}", id);
     }
 
+    /**
+     * Llama a ms-hoteles (vía Feign) para confirmar que el hotelId existe.
+     * Si ms-hoteles responde 404 -> hotel inválido.
+     * Si ms-hoteles no responde (caído) -> no bloqueamos la operación local,
+     * pero queda registrado en logs (mismo criterio "fail-safe" usado en ms-habitaciones).
+     */
+    private void validarHotelExiste(Long hotelId) {
+        log.info("Validando existencia de hotel id {} en ms-hoteles", hotelId);
+
+        try {
+            hotelCliente.obtenerHotelPorId(hotelId);
+
+        } catch (FeignException.NotFound e) {
+            log.error("No existe un hotel con id: {}", hotelId);
+            throw new HotelInvalidoException("No existe un hotel con id: " + hotelId);
+
+        } catch (FeignException e) {
+            log.error("ms-hoteles no disponible al validar hotel {}: {}", hotelId, e.getMessage());
+            // Fail-safe: si el servicio remoto está caído, no tumbamos la creación local.
+        }
+    }
+
     private ServicioResponseDTO convertirADTO(Servicio servicio) {
         ServicioResponseDTO dto = new ServicioResponseDTO();
 
         dto.setId(servicio.getId());
+        dto.setHotelId(servicio.getHotelId());
         dto.setNombre(servicio.getNombre());
         dto.setDescripcion(servicio.getDescripcion());
         dto.setPrecio(servicio.getPrecio());
@@ -128,6 +172,7 @@ public class ServicioService {
     private Servicio convertirAEntidad(ServicioRequestDTO dto) {
         Servicio servicio = new Servicio();
 
+        servicio.setHotelId(dto.getHotelId());
         servicio.setNombre(dto.getNombre());
         servicio.setDescripcion(dto.getDescripcion());
         servicio.setPrecio(dto.getPrecio());

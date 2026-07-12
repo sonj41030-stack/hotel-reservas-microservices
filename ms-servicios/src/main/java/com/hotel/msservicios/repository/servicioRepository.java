@@ -19,6 +19,8 @@ public interface ServicioRepository extends JpaRepository<Servicio, Long> {
 
     List<Servicio> findByPrecioLessThanEqual(double precio);
 
+    List<Servicio> findByHotelIdAndActivoTrue(Long hotelId);
+
     boolean existsByNombre(String nombre);
 
 }

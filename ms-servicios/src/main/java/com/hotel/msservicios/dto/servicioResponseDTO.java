@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ServicioResponseDTO {
     private Long id;
+    private Long hotelId;
     private String nombre;
     private String descripcion;
     private double precio;

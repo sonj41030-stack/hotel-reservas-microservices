@@ -26,6 +26,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    @ExceptionHandler(HotelInvalidoException.class)
+    public ResponseEntity<Map<String, String>> handleHotelInvalido(HotelInvalidoException ex) {
+
+        log.error("Hotel inválido: {}", ex.getMessage());
+
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidaciones(MethodArgumentNotValidException ex) {
 
