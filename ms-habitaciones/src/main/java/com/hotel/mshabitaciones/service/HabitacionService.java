@@ -1,8 +1,10 @@
 package com.hotel.mshabitaciones.service;
 
+import com.hotel.mshabitaciones.cliente.HotelCliente;
 import com.hotel.mshabitaciones.dto.HabitacionRequestDTO;
 import com.hotel.mshabitaciones.dto.HabitacionResponseDTO;
 import com.hotel.mshabitaciones.exception.HabitacionNotFoundException;
+import com.hotel.mshabitaciones.exception.HotelInvalidoException;
 import com.hotel.mshabitaciones.model.Habitacion;
 import com.hotel.mshabitaciones.repository.HabitacionRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class HabitacionService {
 
     private final HabitacionRepository habitacionRepository;
+    private final HotelCliente hotelCliente;
 
     public List<HabitacionResponseDTO> obtenerTodos() {
         log.info("Obteniendo todas las habitaciones");
@@ -70,7 +73,17 @@ public class HabitacionService {
     }
 
     public HabitacionResponseDTO crear(HabitacionRequestDTO dto) {
-        log.info("Creando nueva habitacion tipo: {}", dto.getTipo());
+        log.info("Creando nueva habitacion tipo: {} para hotel id: {}",
+                dto.getTipo(), dto.getHotelId());
+
+        // Comunicación real con ms-hoteles: no se crea una habitación
+        // para un hotel que no existe.
+        if (!hotelCliente.existeHotel(dto.getHotelId())) {
+            log.error("No se puede crear la habitación: hotel id {} no existe", dto.getHotelId());
+            throw new HotelInvalidoException(
+                    "No existe un hotel con id: " + dto.getHotelId()
+            );
+        }
 
         Habitacion habitacion = convertirAEntidad(dto);
 
@@ -91,6 +104,15 @@ public class HabitacionService {
                             "Habitacion no encontrada con id: " + id
                     );
                 });
+
+        // Si cambia el hotelId, se vuelve a validar contra ms-hoteles
+        if (!dto.getHotelId().equals(habitacion.getHotelId())
+                && !hotelCliente.existeHotel(dto.getHotelId())) {
+            log.error("No se puede actualizar: hotel id {} no existe", dto.getHotelId());
+            throw new HotelInvalidoException(
+                    "No existe un hotel con id: " + dto.getHotelId()
+            );
+        }
 
         habitacion.setHotelId(dto.getHotelId());
         habitacion.setTipo(dto.getTipo());

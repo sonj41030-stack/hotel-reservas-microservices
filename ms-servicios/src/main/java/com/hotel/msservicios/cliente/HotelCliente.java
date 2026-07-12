@@ -1,34 +1,12 @@
 package com.hotel.msservicios.cliente;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
-@Slf4j
-@Component
-public class HotelCliente {
+@FeignClient(name = "ms-hoteles")
+public interface HotelCliente {
 
-    private final WebClient webClient;
-
-    public HotelCliente(WebClient.Builder builder) {
-        this.webClient = builder
-                .baseUrl("http://localhost:8085")
-                .build();
-    }
-
-    public Object obtenerHotelPorId(Long hotelId) {
-        log.info("Consultando hotel con id: {}", hotelId);
-
-        try {
-            return webClient.get()
-                    .uri("/api/hoteles/{hotelId}", hotelId)
-                    .retrieve()
-                    .bodyToMono(Object.class)
-                    .block();
-
-        } catch (Exception e) {
-            log.error("Error al consultar hotel {}: {}", hotelId, e.getMessage());
-            return null;
-        }
-    }
+    @GetMapping("/api/hoteles/{id}")
+    Object obtenerHotelPorId(@PathVariable("id") Long id);
 }
