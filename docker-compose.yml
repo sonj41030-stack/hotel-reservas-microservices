@@ -1,3 +1,4 @@
+version: '3.8'
 services:
   eureka-server:
     build: ./eureka-server
@@ -11,7 +12,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-
   api-gateway:
     build: ./api-gateway
     container_name: api-gateway
@@ -22,8 +22,70 @@ services:
         condition: service_healthy
     networks:
       - hotel-network
-
-  # === BASE DE DATOS ===
+  ms-auth:
+    build: ./ms-auth
+    container_name: ms-auth
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-auth:
+        condition: service_healthy
+    networks:
+      - hotel-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-auth:3306/db_auth
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+  ms-clientes:
+    build: ./ms-clientes
+    container_name: ms-clientes
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-clientes:
+        condition: service_healthy
+    networks:
+      - hotel-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-clientes:3306/db_clientes
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+  ms-reservas:
+    build: ./ms-reservas
+    container_name: ms-reservas
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-reservas:
+        condition: service_healthy
+    networks:
+      - hotel-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-reservas:3306/db_reservas
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+  ms-pagos:
+    build: ./ms-pagos
+    container_name: ms-pagos
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-pagos:
+        condition: service_healthy
+    networks:
+      - hotel-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-pagos:3306/db_pagos
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
   mysql-auth:
     image: mysql:8.0
     container_name: mysql-auth
@@ -31,10 +93,14 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: db_auth
     ports:
-      - "3313:3306"
+      - "3316:3306"
     networks:
       - hotel-network
-
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
   mysql-clientes:
     image: mysql:8.0
     container_name: mysql-clientes
@@ -45,7 +111,11 @@ services:
       - "3310:3306"
     networks:
       - hotel-network
-
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
   mysql-reservas:
     image: mysql:8.0
     container_name: mysql-reservas
@@ -56,7 +126,11 @@ services:
       - "3311:3306"
     networks:
       - hotel-network
-
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
   mysql-pagos:
     image: mysql:8.0
     container_name: mysql-pagos
@@ -67,185 +141,11 @@ services:
       - "3312:3306"
     networks:
       - hotel-network
-
-  mysql-hoteles:
-    image: mysql:8.0
-    container_name: mysql-hoteles
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db_hoteles
-    ports:
-      - "3307:3306"
-    networks:
-      - hotel-network
-
-  mysql-habitaciones:
-    image: mysql:8.0
-    container_name: mysql-habitaciones
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db_habitaciones
-    ports:
-      - "3308:3306"
-    networks:
-      - hotel-network
-
-  mariadb-servicios:
-    image: mariadb:10.11
-    container_name: mariadb-servicios
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db_servicios
-    ports:
-      - "3309:3306"
-    networks:
-      - hotel-network
-
-  # === TUS MICROSERVICIOS ===
-  ms-auth:
-    build: ./ms-auth
-    container_name: ms-auth
-    ports:
-      - "8081:8081"
-    depends_on:
-      - mysql-auth
-      - eureka-server
-    networks:
-      - hotel-network
-
-  ms-clientes:
-    build: ./ms-clientes
-    container_name: ms-clientes
-    ports:
-      - "8084:8084"
-    depends_on:
-      - mysql-clientes
-      - eureka-server
-    networks:
-      - hotel-network
-
-  ms-reservas:
-    build: ./ms-reservas
-    container_name: ms-reservas
-    ports:
-      - "8082:8082"
-    depends_on:
-      - mysql-reservas
-      - eureka-server
-    networks:
-      - hotel-network
-
-  ms-pagos:
-    build: ./ms-pagos
-    container_name: ms-pagos
-    ports:
-      - "8083:8083"
-    depends_on:
-      - mysql-pagos
-      - eureka-server
-    networks:
-      - hotel-network
-
-  # === MICROSERVICIOS DE BELEN ===
-  ms-hoteles:
-    build: ./ms-hoteles
-    container_name: ms-hoteles
-    ports:
-      - "8085:8085"
-    depends_on:
-      - mysql-hoteles
-      - eureka-server
-    networks:
-      - hotel-network
-
-  ms-habitaciones:
-    build: ./ms-habitaciones
-    container_name: ms-habitaciones
-    ports:
-      - "8086:8086"
-    depends_on:
-      - mysql-habitaciones
-      - eureka-server
-    networks:
-      - hotel-network
-
-  ms-servicios:
-    build: ./ms-servicios
-    container_name: ms-servicios
-    ports:
-      - "8087:8087"
-    depends_on:
-      - mariadb-servicios
-      - eureka-server
-    networks:
-      - hotel-network
-
-  mysql-notificaciones:
-    image: mysql:8.0
-    container_name: mysql-notificaciones
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db_notificaciones
-    ports:
-      - "3310:3306"
-    networks:
-      - hotel-network
-
-  mysql-reportes:
-    image: mysql:8.0
-    container_name: mysql-reportes
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db_reportes
-    ports:
-      - "3311:3306"
-    networks:
-      - hotel-network
-
-  mysql-housekeeping:
-    image: mysql:8.0
-    container_name: mysql-housekeeping
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db_housekeeping
-    ports:
-      - "3312:3306"
-    networks:
-      - hotel-network
-
-  ms-notificaciones:
-    build: ./ms-notificaciones
-    container_name: ms-notificaciones
-    ports:
-      - "8088:8088"
-    depends_on:
-      - mysql-notificaciones
-      - eureka-server
-    networks:
-      - hotel-network
-
-  ms-reportes:
-    build: ./ms-reportes
-    container_name: ms-reportes
-    ports:
-      - "8089:8089"
-    depends_on:
-      - mysql-reportes
-      - eureka-server
-    networks:
-      - hotel-network
-
-  ms-housekeeping:
-    build: ./ms-housekeeping
-    container_name: ms-housekeeping
-    ports:
-      - "8090:8090"
-    depends_on:
-      - mysql-housekeeping
-      - eureka-server
-    networks:
-      - hotel-network
-
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 networks:
   hotel-network:
     driver: bridge

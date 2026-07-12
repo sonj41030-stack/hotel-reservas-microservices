@@ -22,11 +22,11 @@ public class ReservaService {
 
     public Reserva crearReserva(ReservaRequest request) {
 
-        // VALIDAR CLIENTE EN ms-clientes
+        // VALIDAR CLIENTE EN ms-clientes (via Eureka)
         try {
             ClienteDTO cliente = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8084/clientes/" + request.getClienteId())
+                    .uri("http://ms-clientes/clientes/" + request.getClienteId())
                     .retrieve()
                     .bodyToMono(ClienteDTO.class)
                     .block();
@@ -37,11 +37,11 @@ public class ReservaService {
             System.out.println("No se pudo validar cliente: " + e.getMessage());
         }
 
-        // VALIDAR HABITACION EN ms-habitaciones
+        // VALIDAR HABITACION EN ms-habitaciones (via Eureka)
         try {
             HabitacionDTO habitacion = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8085/api/habitaciones/" + request.getHabitacionId())
+                    .uri("http://ms-habitaciones/api/habitaciones/" + request.getHabitacionId())
                     .retrieve()
                     .bodyToMono(HabitacionDTO.class)
                     .block();
@@ -62,7 +62,7 @@ public class ReservaService {
         reserva.setEstado(EstadoReserva.PENDIENTE);
         Reserva guardada = reservaRepository.save(reserva);
 
-        // ENVIAR NOTIFICACION
+        // ENVIAR NOTIFICACION (via Eureka)
         try {
             NotificacionDTO notificacion = new NotificacionDTO();
             notificacion.setClienteId(request.getClienteId());
@@ -73,7 +73,7 @@ public class ReservaService {
 
             webClientBuilder.build()
                     .post()
-                    .uri("http://localhost:8088/api/notificaciones")
+                    .uri("http://ms-notificaciones/api/notificaciones")
                     .bodyValue(notificacion)
                     .retrieve()
                     .bodyToMono(Void.class)

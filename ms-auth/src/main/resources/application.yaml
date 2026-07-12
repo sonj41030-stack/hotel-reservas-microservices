@@ -5,9 +5,9 @@ spring:
   application:
     name: ms-auth
   datasource:
-    url: jdbc:mysql://localhost:3306/db_auth
+    url: jdbc:mysql://localhost:3316/db_auth?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: root
-    password:
+    password: root
   jpa:
     hibernate:
       ddl-auto: validate
@@ -17,14 +17,17 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-
+# Configuración de Swagger integrada
 springdoc:
   api-docs:
     enabled: true
   swagger-ui:
     enabled: true
     path: /doc/swagger-ui.html
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true

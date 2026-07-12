@@ -42,7 +42,7 @@ public class ClienteController {
         return ResponseEntity.ok(clienteService.listarClientes());
     }
 
-    @PostMapping("/{id}")
+    @GetMapping("/{id}")
     @Operation(summary = "Obtener cliente por ID", description = "Retorna un cliente específico por su ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
