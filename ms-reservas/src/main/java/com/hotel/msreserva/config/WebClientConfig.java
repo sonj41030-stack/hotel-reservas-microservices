@@ -1,4 +1,4 @@
-/*package com.hotel.msreserva.config;
+package com.hotel.msreserva.config;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -13,4 +13,4 @@ public class WebClientConfig {
     public WebClient.Builder webClientBuilder() {
         return WebClient.builder();
     }
-}*/
+}

@@ -23,7 +23,8 @@ import java.util.Optional;
 @Tag(name = "ms-Pagos", description = "Microservicio para gestionar pagos del hotel")
 public class PagoController {
 
-    private final PagoService pagoService = null;
+    // CORREGIDO: Se elimina el "= null" para que Lombok inyecte el servicio correctamente
+    private final PagoService pagoService;
 
     @PostMapping
     @Operation(summary = "Procesar pago", description = "Registra y procesa un nuevo pago")
@@ -32,7 +33,8 @@ public class PagoController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
     public ResponseEntity<PagoResponse> procesarPago(
-            @Valid @PathVariable PagoRequest request) {
+            // CORREGIDO: Cambiado @PathVariable por @RequestBody para recibir el JSON
+            @Valid @RequestBody PagoRequest request) {
         return ResponseEntity.ok(pagoService.procesarPago(request));
     }
 

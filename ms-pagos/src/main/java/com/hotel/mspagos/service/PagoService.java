@@ -29,10 +29,10 @@ public class PagoService {
         pago.setFechaPago(LocalDateTime.now());
         Pago guardado = pagoRepository.save(pago);
 
-        // Avisar a ms-reservas que el pago fue exitoso
+        // CORREGIDO: Usar el nombre del microservicio 'ms-reservas' en lugar de localhost:8082
         try {
             webClient.put()
-                    .uri("http://localhost:8082/reservas/{id}/estado?estado=CONFIRMADA",
+                    .uri("http://ms-reservas/reservas/{id}/estado?estado=CONFIRMADA",
                             request.getReservaId())
                     .retrieve()
                     .bodyToMono(Void.class)
@@ -41,7 +41,7 @@ public class PagoService {
             System.out.println("No se pudo actualizar la reserva: " + e.getMessage());
         }
 
-        // Enviar notificacion a ms-notificaciones
+        // CORREGIDO: Usar el nombre del microservicio 'ms-notificaciones' en lugar de localhost:8088
         try {
             NotificacionDTO notificacion = new NotificacionDTO();
             notificacion.setClienteId(1L);
@@ -51,7 +51,7 @@ public class PagoService {
             notificacion.setEmailDestino("cliente@gmail.com");
 
             webClient.post()
-                    .uri("http://localhost:8088/api/notificaciones")
+                    .uri("http://ms-notificaciones/api/notificaciones")
                     .bodyValue(notificacion)
                     .retrieve()
                     .bodyToMono(Void.class)
