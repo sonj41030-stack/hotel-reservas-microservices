@@ -22,6 +22,58 @@ services:
         condition: service_healthy
     networks:
       - hotel-network
+
+  ms-housekeeping:
+    build: ./ms-housekeeping
+    container_name: ms-housekeeping
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-housekeeping:
+        condition: service_healthy
+    networks:
+      - hotel-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-housekeeping:3306/db_housekeeping
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+  ms-reportes:
+    build: ./ms-reportes
+    container_name: ms-reportes
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-reportes:
+        condition: service_healthy
+    networks:
+      - hotel-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-reportes:3306/db_reportes
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+  ms-notificaciones:
+    build: ./ms-notificaciones
+    container_name: ms-notificaciones
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-notificaciones:
+        condition: service_healthy
+    networks:
+      - hotel-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-notificaciones:3306/db_notificaciones
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
   ms-auth:
     build: ./ms-auth
     container_name: ms-auth
@@ -86,6 +138,75 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+  ms-servicios:
+    build: ./ms-servicios
+    container_name: ms-servicios
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-servicios:
+        condition: service_healthy
+    networks:
+      - hotel-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-servicios:3306/db_servicios
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+
+  mysql-housekeeping:
+    image: mysql:8.0
+    container_name: mysql-housekeeping
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_housekeeping
+    ports:
+      - "3314:3306"
+    networks:
+      - hotel-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  mysql-reportes:
+    image: mysql:8.0
+    container_name: mysql-reportes
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_reportes
+    ports:
+      - "3315:3306"
+    networks:
+        - hotel-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+  mysql-notificaciones:
+    image: mysql:8.0
+    container_name: mysql-notificaciones
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_notificaciones
+    ports:
+      - "3317:3306"
+    networks:
+      - hotel-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+      
   mysql-auth:
     image: mysql:8.0
     container_name: mysql-auth
@@ -97,10 +218,12 @@ services:
     networks:
       - hotel-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot" ]
       interval: 5s
       timeout: 5s
       retries: 10
+      start_period: 60s
+
   mysql-clientes:
     image: mysql:8.0
     container_name: mysql-clientes
@@ -112,10 +235,12 @@ services:
     networks:
       - hotel-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot" ]
       interval: 5s
       timeout: 5s
       retries: 10
+      start_period: 60s
+
   mysql-reservas:
     image: mysql:8.0
     container_name: mysql-reservas
@@ -127,10 +252,12 @@ services:
     networks:
       - hotel-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot" ]
       interval: 5s
       timeout: 5s
       retries: 10
+      start_period: 60s
+
   mysql-pagos:
     image: mysql:8.0
     container_name: mysql-pagos
@@ -142,10 +269,30 @@ services:
     networks:
       - hotel-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot" ]
       interval: 5s
       timeout: 5s
       retries: 10
+      start_period: 60s
+
+  mysql-servicios:
+    image: mysql:8.0
+    container_name: mysql-servicios
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_servicios
+    ports:
+      - "3313:3306"
+    networks:
+      - hotel-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+
 networks:
   hotel-network:
     driver: bridge
